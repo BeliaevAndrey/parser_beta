@@ -53,6 +53,7 @@ def outside_crutch(company_name: list = None) -> dict[str, list[dict[str, str]]]
     for company in company_name:
         current = __grabbers_dict.get(company, None)
         if current:
+            print(f'\033[32m\nGrabbing: {company} \033[0m')
             companies_resulting_dict[company] = current.start_grabbing()
     return companies_resulting_dict
 
