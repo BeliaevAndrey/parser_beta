@@ -20,6 +20,10 @@ class LuxoftPageParser:
         logger.info(f'File out path: {self._out_path}')
         self._final_dicts_lst = []
 
+    @property
+    def final_dict_list(self):
+        return self._final_dicts_lst
+
     def parse_out(self, pages_list_in: list[str]):
         """Starts parsing process. Phase 0"""
         result = self._catcher(pages_list_in)
@@ -65,7 +69,10 @@ class LuxoftPageParser:
         """Grab basic dictionary-strings from pages by regex pattern. Phase 1"""
         intermedia_result_1 = {}
         for page in pages_list_in:
-            intermedia_result_1[page[0]] = (self.DICT_PATTERN.findall(page[1])[0])
+            try:
+                intermedia_result_1[page[0]] = (self.DICT_PATTERN.findall(page[1])[0])
+            except Exception as exc:
+                print('\033[31m', f'{exc.__class__.__name__}: {exc}', '\033[0m')
         return intermedia_result_1
 
     def _obtain_dicts(self, in_list: dict[str, str]) -> tuple[dict[str, dict[str, str]], dict[str, [dict]]]:

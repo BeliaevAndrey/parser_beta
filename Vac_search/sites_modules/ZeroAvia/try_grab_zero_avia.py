@@ -20,6 +20,7 @@ class GrabZeroAviaVacancies:
     def __init__(self, out_path: str, file_name: str):
         self._out_file = os.path.join(out_path, file_name)
         self._vac_count = 0
+        self._final_dict_list = []
 
     def _form_final_dct(self, dct_in: LIST_OF_DICTS_SRC) -> LIST_OF_DICTS_OUT:
         """
@@ -27,7 +28,6 @@ class GrabZeroAviaVacancies:
         :param dct_in: list[dict[str, [str, list]]]     -- json-decoded dictionary
         :return: list[dict[str, str]]                   -- list of filtered dict
         """
-        final_list = []
         for item in dct_in:
             tmp_dict = {
                 "company": "ZeroAvia",
@@ -39,10 +39,10 @@ class GrabZeroAviaVacancies:
                 'language': item.get("language", None),
                 'locations': '; '.join(loc) if (loc := item.get("locations", None)) else None
             }
-            final_list.append(tmp_dict)
+            self._final_dict_list .append(tmp_dict)
             self._vac_count += 1
         print(f'{self._vac_count=}')
-        return final_list
+        return self._final_dict_list
 
     @staticmethod
     def first_fun(an_url: [str, list]) -> [str, list[tuple[str, str]]]:
@@ -101,9 +101,14 @@ class GrabZeroAviaVacancies:
                 print(f'\033[031m{exc.__class__.__name__}: {exc}\033[0m')   # TODO: reorient to logger
         dump_to_json(self._out_file, self._form_final_dct(za_job_dct))
 
-    def start_grabbing(self):
+    def start_grabbing(self) -> [LIST_OF_DICTS_OUT, None]:
         """Kickstart"""
-        self._walk_over_zeroavia()
+        try:
+            self._walk_over_zeroavia()  # function is unstable yet
+            return self._final_dict_list
+        except Exception as exc:
+            print('\033[31m' + f'{exc.__class__.__name__}: {exc}' + '\033[0m')
+            # TODO: setup error logging
 
 
 if __name__ == '__main__':

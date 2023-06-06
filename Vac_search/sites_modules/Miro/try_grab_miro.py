@@ -45,9 +45,10 @@ class GrabMiroVacancies:
         self._collect_vac_urls(out_dict, urls_lst, urls_dct)
         return urls_lst, urls_dct
 
-    def start_grabbing(self):
+    def start_grabbing(self) -> list[dict[str, str]]:
         self._grab_start_page(LINK)
         dump_to_json(self._final_file, self._vacancies_dicts_lst)
+        return self._vacancies_dicts_lst
 
 
 if __name__ == '__main__':

@@ -13,10 +13,10 @@ class GrabJetBrainsVacancies:
 
     def __init__(self, out_path: str, file_name: str):
         self._out_file = os.path.join(out_path, file_name)
+        self._final_dict_lst = []
 
-    def _form_final_dict(self, data_in: list[dict[str, str]]) -> list[dict]:
+    def _form_final_dict(self, data_in: list[dict[str, str]]) -> list[dict[str, str]]:
         """Getting interesting positions from dictionary"""
-        final_dict_lst = []
         for item in data_in:
             try:
                 tmp_dict = {
@@ -27,12 +27,12 @@ class GrabJetBrainsVacancies:
                     'role': ','.join(item.get('role', [' -empty- ', ])),
                     'technologies': ', '.join(item.get('technologies', [' -empty- ', ])),
                 }
-                final_dict_lst.append(tmp_dict)
+                self._final_dict_lst.append(tmp_dict)
                 self._vac_count += 1
             except Exception as exc:
                 print(f'\033[31m{exc.__class__}: {exc}\0330m')      # TODO: add logger instruction here
                 self._lost_items.append(item)
-        return final_dict_lst
+        return self._final_dict_lst
 
     @staticmethod
     def _first_fun(an_url: str) -> list[dict]:
@@ -51,11 +51,12 @@ class GrabJetBrainsVacancies:
         except ValueError:  # TODO: add logger instruction here
             return []
 
-    def start_grab_jb(self):
+    def start_grabbing(self) -> [list[dict[str, str]], None]:
         """Kickstart"""
         tmp: list[dict] = self._first_fun(BASIC_LINK)
         if tmp:
             dump_to_json(self._out_file, self._form_final_dict(tmp))
+            return self._final_dict_lst
         else:
             print('Error')  # TODO: add logger instruction here
 

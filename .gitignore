@@ -1,2 +1,4 @@
 .idea/
 *.log
+/Vac_search/out_files/
+/Vac_search/sites_modules/Veeam/
