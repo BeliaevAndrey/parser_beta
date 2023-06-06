@@ -1,7 +1,5 @@
 """
-
 Example file illustrating call of sites walker.
-
 """
 from Vac_search import outside_crutch, get_list_of_companies
 from time import sleep
