@@ -19,6 +19,7 @@ def main():
         key, val = outside_crutch(['luxoft_grb']).items()
         print(key, end=': ', sep='')
         print(len(val) if val else '\033[31mObtained empty list\033[0m')
+        luxoft_flag = (key == 'luxoft_grb' and val and len(val) < 100)
 
 
 if __name__ == '__main__':
