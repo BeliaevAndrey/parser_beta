@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import json
 import os
+import asyncio
 
 
 from Vac_search.async_gr_custom import AsyncGrab
@@ -30,10 +31,10 @@ class GrabMiroVacancies:
                 }
             )
 
-    def _grab_start_page(self, link: str) -> tuple[list[str], dict[str, str]]:
+    async def _grab_start_page(self, link: str) -> tuple[list[str], dict[str, str]]:
         """Init page scrapping (local entrypoint)"""
         AsyncGrab.set_pages_list([link])
-        out_string: str = AsyncGrab.start()[0][1]
+        out_string: str = (await AsyncGrab.start())[0][1]
         miro_sp_soup = BeautifulSoup(out_string, 'lxml')
 
         tmp = miro_sp_soup.find(
@@ -45,11 +46,12 @@ class GrabMiroVacancies:
         self._collect_vac_urls(out_dict, urls_lst, urls_dct)
         return urls_lst, urls_dct
 
-    def start_grabbing(self) -> list[dict[str, str]]:
-        self._grab_start_page(LINK)
+    async def start_grabbing(self) -> list[dict[str, str]]:
+        await self._grab_start_page(LINK)
         dump_to_json(self._final_file, self._vacancies_dicts_lst)
         return self._vacancies_dicts_lst
 
 
 if __name__ == '__main__':
-    print('module')
+    print('A module. Not for separate use.')
+    # asyncio.run(GrabMiroVacancies().start_grabbing())

@@ -19,7 +19,7 @@ class GrabEpamVacancies:
         self._final_file_lost = os.path.join(out_path, 'epam_lost_data.json')
         self._final_dicts_list = []
 
-    def start_grabbing(self, start_link: str = _LINK) -> list[dict[str, str]]:
+    async def start_grabbing(self, start_link: str = _LINK) -> list[dict[str, str]]:
         session = HTMLSession()
         request = session.get(start_link)
         out_dct: dict = request.json()
@@ -47,4 +47,4 @@ class GrabEpamVacancies:
 
 
 if __name__ == '__main__':
-    print('module')
+    print('A module. Not for separate use')

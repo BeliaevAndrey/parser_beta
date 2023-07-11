@@ -59,5 +59,6 @@ def get_list_of_companies():
 
 
 if __name__ == '__main__':
-    # asyncio.run(__total_walk())
-    asyncio.run(outside_crutch(['zeroavia_grb']))
+    asyncio.run(__total_walk())
+    # asyncio.run(outside_crutch(['zeroavia_grb']))
+

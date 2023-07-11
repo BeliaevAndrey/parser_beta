@@ -59,4 +59,5 @@ class GrabLuxoftVacancies:
 
 
 if __name__ == '__main__':
-    asyncio.run(GrabLuxoftVacancies('Luxoft_out_files', 'Luxoft_vacancies.json').start_grabbing())
+    print('A module. Not for separate use')
+    # asyncio.run(GrabLuxoftVacancies('Luxoft_out_files', 'Luxoft_vacancies.json').start_grabbing())

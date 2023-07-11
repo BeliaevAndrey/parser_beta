@@ -114,5 +114,4 @@ class GrabZeroAviaVacancies:
 
 if __name__ == '__main__':
     print('A module. Not for separate use')
-    # GrabZeroAviaVacancies('za_outfiles', 'ZeroAvia_vacancies.json').start_grabbing()
     # asyncio.run(GrabZeroAviaVacancies('za_outfiles', 'ZeroAvia_vacancies.json').start_grabbing())
