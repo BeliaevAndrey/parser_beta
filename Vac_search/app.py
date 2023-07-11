@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 from Vac_search.sites_modules import *
 
@@ -32,29 +33,24 @@ __grabbers_dict = {
 }
 
 
-def __total_walk() -> dict[str, list[dict[str, str]]]:
+async def __total_walk() -> dict[str, list[dict[str, str]]]:
     companies_resulting_dict = {}
     for company, grabber in __grabbers_dict.items():
         print(f'\033[32m\nGrabbing: {company} \033[0m')
-        companies_resulting_dict[company] = grabber.start_grabbing()
-    # start grab vacancies links (now not needed, left just for clearness)
-    # jetbrains_grb.start_grab()
-    # epam_grb.start_grabbing()
-    # miro_grb.start_grabbing()
-    # luxoft_grb.start_grabbing()
-    # zeroavia_grb.start_grabbing()
+        resulting_dict = await grabber.start_grabbing()
+        companies_resulting_dict[company] = resulting_dict
     return companies_resulting_dict
 
 
-def outside_crutch(company_name: list = None) -> dict[str, list[dict[str, str]]]:
+async def outside_crutch(companies_names: list = None) -> dict[str, list[dict[str, str]]]:
     companies_resulting_dict = {}
-    if company_name is None:
-        return __total_walk()
-    for company in company_name:
+    if companies_names is None:
+        return await __total_walk()
+    for company in companies_names:
         current = __grabbers_dict.get(company, None)
         if current:
             print(f'\033[32m\nGrabbing: {company} \033[0m')
-            companies_resulting_dict[company] = current.start_grabbing()
+            companies_resulting_dict[company] = await current.start_grabbing()
     return companies_resulting_dict
 
 
@@ -63,4 +59,5 @@ def get_list_of_companies():
 
 
 if __name__ == '__main__':
-    __total_walk()
+    # asyncio.run(__total_walk())
+    asyncio.run(outside_crutch(['zeroavia_grb']))
