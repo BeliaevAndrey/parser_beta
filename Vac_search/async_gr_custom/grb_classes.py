@@ -50,9 +50,7 @@ class AsyncGrab:
     @classmethod
     async def start(cls) -> list[tuple[str, str]]:
         cls._temp_storage = []
-        # eve_loop = asyncio.new_event_loop()
         await cls._grab_wordlist()
-        # eve_loop.close()
         if cls._temp_storage:
             return cls._temp_storage
         else:
