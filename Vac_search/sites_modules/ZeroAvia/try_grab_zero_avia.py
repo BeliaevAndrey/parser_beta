@@ -3,6 +3,7 @@ import os
 from bs4 import BeautifulSoup
 from typing import TypeAlias
 import json
+import asyncio
 
 from Vac_search.async_gr_custom import AsyncGrab
 from Vac_search.cus_utility import datestamp, dump_to_json
@@ -15,7 +16,7 @@ class GrabZeroAviaVacancies:
     # Attention!!! Not sure if links below will not expire ever...
     _URL_OF_INTEREST = 'https://jobs.workable.com/search?query=zeroavia&remote=false'
     _PRE_LINK = 'https://jobs.workable.com/api/v1/companies/r6jxFNjY8f9DVffcV8kB3T?pageToken='
-    _PATTERN = re.compile(r'"nextPageToken":"[\w\d=]+"')
+    _TOKEN_PATTERN = re.compile(r'"nextPageToken":"[\w\d=]+"')
 
     def __init__(self, out_path: str, file_name: str):
         self._out_file = os.path.join(out_path, file_name)
@@ -45,38 +46,38 @@ class GrabZeroAviaVacancies:
         return self._final_dict_list
 
     @staticmethod
-    def first_fun(an_url: [str, list]) -> [str, list[tuple[str, str]]]:
+    async def first_fun(an_url: [str, list]) -> [str, list[tuple[str, str]]]:
         """Initial (or final) grabbing method"""
         if isinstance(an_url, str):
             AsyncGrab.set_pages_list([an_url])
-            tmp_stub = AsyncGrab.start()
+            tmp_stub = await AsyncGrab.start()
             try:
                 out_string: str = tmp_stub[0][1]
                 return out_string
             except Exception as exc:
                 print('\033[31m', f'{exc.__class__.__name__}: {exc}', '\033[0m')
                 print(tmp_stub)         # TODO: change to log-dump
-                # raise SystemExit      # TODO: Check strictly
         elif isinstance(an_url, list):
             AsyncGrab.set_pages_list(an_url)
-            out_list: list[tuple[str, str]] = AsyncGrab.start()
+            out_list: list[tuple[str, str]] = await AsyncGrab.start()
             return out_list
         else:
             raise TypeError("Unsupported type of incoming data")
 
-    def _walk_over_zeroavia(self):      # TODO: Refactor! Decomposition needed.
+    async def _walk_over_zeroavia(self):      # TODO: Refactor! Decomposition needed.
         """
         Main grabbing method for ZeroAvia site.
         Yet another spaghetti-code for now.
         """
-        response: str = self.first_fun(self._URL_OF_INTEREST)
-        token: str = self._PATTERN.findall(response)[0]
+        response = await self.first_fun(self._URL_OF_INTEREST)
+        token: str = self._TOKEN_PATTERN.findall(response)[0]
         # print(token)                  # TODO: move to logger (maybe useful to control scrapping)
         new_link = self._PRE_LINK + token.split(':')[1].replace('"', '')
         responses = []
         for _ in range(5):
-            responses.append(self.first_fun(new_link))
-            token: list = self._PATTERN.findall(responses[-1])
+            a_response = await self.first_fun(new_link)
+            responses.append(a_response)
+            token: list = self._TOKEN_PATTERN.findall(responses[-1])
             if token:
                 token: str = token[0]
                 new_link = self._PRE_LINK + token.split(':')[1].replace('"', '')
@@ -101,10 +102,10 @@ class GrabZeroAviaVacancies:
                 print(f'\033[031m{exc.__class__.__name__}: {exc}\033[0m')   # TODO: reorient to logger
         dump_to_json(self._out_file, self._form_final_dct(za_job_dct))
 
-    def start_grabbing(self) -> [LIST_OF_DICTS_OUT, None]:
+    async def start_grabbing(self) -> [LIST_OF_DICTS_OUT, None]:
         """Kickstart"""
         try:
-            self._walk_over_zeroavia()  # function is unstable yet
+            await self._walk_over_zeroavia()  # function is unstable yet
             return self._final_dict_list
         except Exception as exc:
             print('\033[31m' + f'{exc.__class__.__name__}: {exc}' + '\033[0m')
@@ -113,4 +114,4 @@ class GrabZeroAviaVacancies:
 
 if __name__ == '__main__':
     print('A module. Not for separate use')
-    GrabZeroAviaVacancies('za_outfiles', 'ZeroAvia_vacancies.json').start_grabbing()
+    # asyncio.run(GrabZeroAviaVacancies('za_outfiles', 'ZeroAvia_vacancies.json').start_grabbing())

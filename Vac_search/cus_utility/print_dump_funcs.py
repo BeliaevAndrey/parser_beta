@@ -85,3 +85,7 @@ def prn_dct_r(in_list: [list[dict], dict]) -> None:
 
 def prn_otb() -> None:
     print('\n'.join(['=' * 200, '/' * 200, '=' * 200]))
+
+
+if __name__ == '__main__':
+    print('A module. Not for separate use.')

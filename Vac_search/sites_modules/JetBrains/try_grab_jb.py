@@ -35,12 +35,12 @@ class GrabJetBrainsVacancies:
         return self._final_dict_lst
 
     @staticmethod
-    def _first_fun(an_url: str) -> list[dict]:
+    async def _first_fun(an_url: str) -> list[dict]:
         """Initial (or final) grabbing method"""
         start_line = 'var VACANCIES = [{'
         end_line = '}]'
         AsyncGrab.set_pages_list([an_url])
-        results: list[tuple[str, str]] = AsyncGrab.start()
+        results: list[tuple[str, str]] = await AsyncGrab.start()
         out_string: str = results[0][1]
         try:
             start_index = out_string.index(start_line) + len(start_line) - 2
@@ -51,9 +51,9 @@ class GrabJetBrainsVacancies:
         except ValueError:  # TODO: add logger instruction here
             return []
 
-    def start_grabbing(self) -> [list[dict[str, str]], None]:
+    async def start_grabbing(self) -> [list[dict[str, str]], None]:
         """Kickstart"""
-        tmp: list[dict] = self._first_fun(BASIC_LINK)
+        tmp = await self._first_fun(BASIC_LINK)
         if tmp:
             dump_to_json(self._out_file, self._form_final_dict(tmp))
             return self._final_dict_lst

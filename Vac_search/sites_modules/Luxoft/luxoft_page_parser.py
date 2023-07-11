@@ -108,4 +108,4 @@ class LuxoftPageParser:
 
 
 if __name__ == '__main__':
-    print('To be used as part of complex for "Luxoft"')
+    print('To be used as part of complex for "Luxoft" only')
